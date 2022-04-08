@@ -1,7 +1,7 @@
 # agilify
 A test appplication to manage an agile dashboard
 
-## Installation
+## Commands
 
 ```bash
 Comandos:
