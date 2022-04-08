@@ -1,3 +1,9 @@
+# agilify
+A test appplication to manage an agile dashboard
+
+## Installation
+
+```bash
 Comandos:
   index.js add-user [name] [email] [pass]   Register a new user
   index.js list-users                       Show all the users
@@ -11,3 +17,4 @@ Comandos:
 Opciones:
   --help     Muestra ayuda                                            [booleano]
   --version  Muestra número de versión                                [booleano]
+```
