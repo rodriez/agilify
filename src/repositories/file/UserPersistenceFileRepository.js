@@ -3,9 +3,9 @@ import * as path from 'path'
 import lodash from 'lodash'
 
 /**
- * @typedef {import('../services/UserService').UserSearchCriteria} UserSearchCriteria
- * @typedef {import('../services/UserService').User} User
- * @typedef {import('../services/UserService').UserPersistence} UserPersistence
+ * @typedef {import('../../services/UserService').UserSearchCriteria} UserSearchCriteria
+ * @typedef {import('../../services/UserService').User} User
+ * @typedef {import('../../services/UserService').UserPersistence} UserPersistence
  * 
  * @implements {UserPersistence}
  */
@@ -44,9 +44,9 @@ export default class UserPersistenceFileRepository {
     }
     
     /**
-     * @returns {User[]}
+     * @returns {Promise<User[]>}
      */
-    all() {
+    async all() {
         this.load()
         
         return this.collection

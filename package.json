@@ -4,6 +4,7 @@
   "description": "Agile dashboard for educational porpuses",
   "main": "src/index.js",
   "scripts": {
+    "database": "node src/db.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +21,11 @@
   },
   "homepage": "https://github.com/rodriez/agilify#readme",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "lodash": "^4.17.21",
+    "mysql2": "^2.3.3",
+    "node-notifier": "^10.0.1",
+    "sequelize": "^6.18.0",
     "uuid": "^8.3.2",
     "yargs": "^17.4.0"
   },

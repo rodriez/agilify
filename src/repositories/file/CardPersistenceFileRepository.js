@@ -3,23 +3,29 @@ import * as path from 'path'
 import lodash from 'lodash'
 
 /**
- * @typedef {import('../services/CardService').Card} Card
- * @typedef {import('../services/CardService').CardPersistence} CardPersistence
+ * @typedef {import('../../services/CardService').Card} Card
+ * @typedef {import('../../services/CardService').CardPersistence} CardPersistence
+ * @typedef {import('../../services/DashboardService').CardSearchEngine} CardSearchEngine
  * 
  * @implements {CardPersistence}
+ * @implements {CardSearchEngine}
  */
 export default class CardPersistenceFile {
 
     /**
      * 
-     * @param {string} filePath 
+     * @param {string} filePath
+     * @param {import('events').EventEmitter=} eventEmitter 
      */
-    constructor(filePath) {
+    constructor(filePath, eventEmitter) {
         /**@private */
         this.path = filePath
 
         /**@private @type Card[]*/
         this.collection = []
+
+        /**@private */
+        this.eventEmitter = eventEmitter
 
         this.load()
     }
@@ -28,19 +34,20 @@ export default class CardPersistenceFile {
      * 
      * @param {Card} card 
      */
-    add(card) {
+    async add(card) {
         this.collection.push(card)
 
         this.save()
+        this.eventEmitter?.emit('card-created', card)
     }
 
     /**
      * 
      * @param {string} id 
      * 
-     * @returns {Card|undefined}
+     * @returns {Promise<Card|undefined>}
      */
-    findById(id) {
+    async findById(id) {
         const idx = lodash.findIndex(this.collection, { id: id })
 
         if (idx >= 0) {
@@ -52,17 +59,18 @@ export default class CardPersistenceFile {
      * 
      * @param {Card} card 
      */
-    update(card) {
+    async update(card) {
         lodash.remove(this.collection, {id: card.id})
         
         this.add(card)
+        this.eventEmitter?.emit('card-updated', card)
     }
 
     /**
      * 
-     * @returns {Card[]}
+     * @returns {Promise<Card[]>}
      */
-     all() {
+    async all() {
         this.load()
         
         return this.collection

@@ -16,7 +16,7 @@ import * as uuid from 'uuid'
  * @typedef {object} UserPersistence
  * @property {function(User):void} add - Register a new user
  * @property {function(UserSearchCriteria):Boolean} exists - Search and return a value that indicate if the user exists
- * @property {function():User[]} all - Return all the users in the db
+ * @property {function():Promise<User[]>} all - Return all the users in the db
  */
 export default class UserService {
 
@@ -40,9 +40,9 @@ export default class UserService {
      * @throws {Error} Invalid user email
      * @throws {Error} Invalid user pass
      * 
-     * @returns {User}
+     * @returns {Promise<User>}
      */
-    addUser(req) {
+    async addUser(req) {
         this.checkAddUserRequest(req)
 
         const user = {
@@ -58,7 +58,7 @@ export default class UserService {
             throw Error("Invalid user email")
         }
 
-        this.userPersistence.add(user)
+        await this.userPersistence.add(user)
 
         return user
     }
@@ -80,7 +80,12 @@ export default class UserService {
         }
     }
 
-    listUsers() {
-        return this.userPersistence.all()
+    /**
+     * Get all registered users
+     * 
+     * @returns {Promise<User[]>}
+     */
+    async listUsers() {
+        return await this.userPersistence.all()
     }
 }

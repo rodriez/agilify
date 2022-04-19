@@ -8,8 +8,8 @@ const validStatuses = [STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE]
 
 /**
  * @typedef {object} Card
- * @property {string} id
- * @property {string} title
+ * @property {string=} id
+ * @property {string=} title
  * @property {string=} userId
  * @property {string=} description
  * @property {string} status
@@ -17,9 +17,9 @@ const validStatuses = [STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE]
  * @property {Date} updatedAt
  * 
  * @typedef {object} CardPersistence
- * @property {function(Card):void} add - Register a new Card
- * @property {function(string):Card|undefined} findById - Return a value that indicates if the user exist
- * @property {function(Card):void} update - Update an existing Card. If the card not exist throws an error
+ * @property {function(Card):Promise<void>} add - Register a new Card
+ * @property {function(string):Promise<Card|undefined>} findById - Return a value that indicates if the user exist
+ * @property {function(Card):Promise<void>} update - Update an existing Card. If the card not exist throws an error
  */
 export default class CardService {
 
@@ -43,20 +43,20 @@ export default class CardService {
      * @throws {Error} Invalid card title
      * @throws {Error} Invalid card user
      */
-    addCard(req) {
+    async addCard(req) {
         this.checkAddCardRequest(req)
 
         const card = {
             id: uuid.v4().split('-')[0],
             title: req.title,
-            userId: req.userId,
+            user_id: req.userId,
             status: STATUS_PENDING,
             description: req.description,
             createdAt: new Date(),
             updatedAt: new Date()
         }
 
-        this.cardPersistence.add(card)
+        await this.cardPersistence.add(card)
     }
 
     /**
@@ -83,10 +83,10 @@ export default class CardService {
      * @throws {Error} Invalid card status
      * @throws {Error} Card not found
      */
-    updateCardStatus(req) {
+    async updateCardStatus(req) {
         this.checkUpdateCardRequest(req)
 
-        const card = this.cardPersistence.findById(req.id)
+        const card = await this.cardPersistence.findById(req.id)
         if (card == undefined) {
             throw Error("Card not found")
         }
@@ -96,7 +96,7 @@ export default class CardService {
         card.updatedAt= new Date(),
         
 
-        this.cardPersistence.update(card)
+        await this.cardPersistence.update(card)
     }
 
     /**

@@ -1,10 +1,12 @@
 import CardService, { STATUS_DONE, STATUS_IN_PROGRESS, STATUS_PENDING } from "../services/CardService.js";
-import UserPersistenceFileRepository from "../repositories/UserPersistenceFileRepository.js";
-import CardPersistenceFile from "../repositories/CardPersistenceFileRepository.js";
+import UserPersistenceSqlRepository from "../repositories/sql/UserPersistenceSqlRepository.js";
+import CardPersistenceSqlRepository from "../repositories/sql/CardPersistenceSqlRepository.js";
 import DashboardHandler from "./DashboardHandler.js";
+import NotificationRepository from "../repositories/notifications/NotificationRepository.js";
 
-const cardPersistence = new CardPersistenceFile("./data/cards.json")
-const userPersistence = new UserPersistenceFileRepository("./data/users.json")
+const notificationRepo = new NotificationRepository()
+const cardPersistence = new CardPersistenceSqlRepository(notificationRepo)
+const userPersistence = new UserPersistenceSqlRepository()
 
 export default class CardHandler {
     
@@ -12,43 +14,43 @@ export default class CardHandler {
      * 
      * @param {*} req 
      */
-    static addCard(req) {
+    static async addCard(req) {
         const addCardRequest = {
             title: req.title,
             userId: req.userId,
-            description: req.description
+            description: req.desc
         }
 
         try {
             const service = new CardService(cardPersistence, userPersistence);
-            service.addCard(addCardRequest)
+            await service.addCard(addCardRequest)
 
-            DashboardHandler.showDashboard()
+            await DashboardHandler.showDashboard()
         } catch(e) {
             console.error(`An error has ocurred trying to create the card: ${e.message}`)
         }
     }
 
-    static moveCardToPending(req) {
+    static async moveCardToPending(req) {
         req.status = STATUS_PENDING
-        CardHandler.updateCardStatus(req)
+        await CardHandler.updateCardStatus(req)
     }
 
-    static moveCardToInProgress(req) {
+    static async moveCardToInProgress(req) {
         req.status = STATUS_IN_PROGRESS
-        CardHandler.updateCardStatus(req)
+        await CardHandler.updateCardStatus(req)
     }
 
-    static moveCardToDone(req) {
+    static async moveCardToDone(req) {
         req.status = STATUS_DONE
-        CardHandler.updateCardStatus(req)
+        await CardHandler.updateCardStatus(req)
     }
 
     /**
      * 
      * @param {*} req 
      */
-     static updateCardStatus(req) {
+    static async updateCardStatus(req) {
         const updateCardstatusRequest = {
             id: req.id,
             status: req.status
@@ -56,9 +58,9 @@ export default class CardHandler {
 
         try {
             const service = new CardService(cardPersistence, userPersistence);
-            service.updateCardStatus(updateCardstatusRequest)
+            await service.updateCardStatus(updateCardstatusRequest)
 
-            DashboardHandler.showDashboard()
+            await DashboardHandler.showDashboard()
         } catch(e) {
             console.error(`An error has ocurred trying to update the card status: ${e.message}`)
         }

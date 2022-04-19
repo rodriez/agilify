@@ -1,14 +1,14 @@
 import UserService from "../services/UserService.js";
-import UserPersistenceFile from "../repositories/UserPersistenceFileRepository.js"
+import UserPersistenceSql from "../repositories/sql/UserPersistenceSqlRepository.js"
 
-const userPersistenceRepository = new UserPersistenceFile("./data/users.json");
+const userPersistenceRepository = new UserPersistenceSql();
 
 export default class UserHandler {
 
     /**
      * @param {*} req 
      */
-    static addUser(req) {
+    static async addUser(req) {
         const addUserReq = {
             name: req.name,
             email: req.email,
@@ -17,7 +17,7 @@ export default class UserHandler {
 
         try {
             const userService = new UserService(userPersistenceRepository)
-            const user = userService.addUser(addUserReq)
+            const user = await userService.addUser(addUserReq)
 
             delete user.pass
             delete user.updatedAt
@@ -31,17 +31,18 @@ export default class UserHandler {
     /**
      * 
      */
-     static listUsers() {
+     static async listUsers() {
         try {
             const userService = new UserService(userPersistenceRepository)
-            const users = userService.listUsers().map(u => {
+            const users = await userService.listUsers()
+            const presentableUsers = users.map(u => {
                 delete u.pass
 
                 return u
             })
             
             console.clear()
-            console.table(users)
+            console.table(presentableUsers)
         } catch(e) {
             console.error(`An error has ocurred trying to create the user: ${e.message}`)
         }

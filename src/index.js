@@ -1,3 +1,4 @@
+import "./db.js";
 import yargs from "yargs";
 import {hideBin} from "yargs/helpers";
 import UserHandler from "./handlers/UserHandler.js";
