@@ -35,6 +35,17 @@ export default class UserPersistenceFileRepository {
     }
 
     /**
+     * @param {User} user 
+     */
+     update(user) {
+        const idx = lodash.findIndex(this.collection, {id: user.id})
+        if (idx >= 0) {
+            this.collection[idx] = user
+            this.save()   
+        }
+    }
+
+    /**
      * @param {UserSearchCriteria} criteria 
      * 
      * @returns {boolean}

@@ -41,4 +41,18 @@ export default class UserPersistenceFileRepository {
 
         return resultSet.map(row => row.toUser())
     }
+
+    /**
+     * @param {User} user 
+     */
+     async update(user) {
+        const userId = user.id
+        delete(user.id)
+
+        await UserModel.update(user, {
+            where: {
+                id: userId
+            }
+        })
+    }
 }

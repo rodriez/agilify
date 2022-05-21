@@ -22,7 +22,7 @@ export default class UserHandler {
             delete user.pass
             delete user.updatedAt
             
-            UserHandler.listUsers()
+            await UserHandler.listUsers()
         } catch(e) {
             console.error(`An error has ocurred trying to create the user: ${e.message}`)
         }
@@ -45,6 +45,20 @@ export default class UserHandler {
             console.table(presentableUsers)
         } catch(e) {
             console.error(`An error has ocurred trying to create the user: ${e.message}`)
+        }
+    }
+
+    /**
+     * @param {*} req 
+     */
+    static async changeUser(req) {
+        try {
+            const userService = new UserService(userPersistenceRepository)
+            await userService.updateUser(req)
+
+            await UserHandler.listUsers()
+        } catch(e) {
+            console.error(`An error has ocurred trying to update the user: ${e.message}`)
         }
     }
 }

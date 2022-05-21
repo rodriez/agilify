@@ -10,6 +10,8 @@ const app = yargs(hideBin(process.argv))
     //User commands    
     .command("add-user [name] [email] [pass]", "Register a new user", {}, UserHandler.addUser)
     .command("list-users", "Show all the users", {}, UserHandler.listUsers)
+    .command("change-user-pass [id] [pass]", "Show all the users", {}, UserHandler.changeUser)
+    .command("change-user [id] [name] [email]", "Show all the users", {}, UserHandler.changeUser)
     //Card commands
     .command("add-card [title] [desc] [userId]", "Register a card", {}, CardHandler.addCard)
     .command("move-card-to-pending [id]", "Change a card status", {}, CardHandler.moveCardToPending)
